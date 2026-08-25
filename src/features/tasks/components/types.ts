@@ -6,6 +6,7 @@ export type Question = LocalizedText & {
   context?: LocalizedText;
   statement?: LocalizedText;
   explanation?: LocalizedText;
+  visual?: "noise" | "cars" | "weather" | "energy" | "museums" | "revenue";
   options: LocalizedText[];
   correct: number;
   hint: LocalizedText;
@@ -17,4 +18,6 @@ export type Module = {
   desc: LocalizedText;
   icon: LucideIcon;
   questions: Question[];
+  examples?: Question[];
+  duration?: number;
 };
