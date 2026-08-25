@@ -7,6 +7,7 @@ export type Question = LocalizedText & {
   statement?: LocalizedText;
   explanation?: LocalizedText;
   visual?: "noise" | "cars" | "weather" | "energy" | "museums" | "revenue";
+  puzzle?: "triangle-merge" | "color-cycle" | "size-links" | "plus-triangles" | "rect-plus" | "v-squares";
   options: LocalizedText[];
   correct: number;
   hint: LocalizedText;

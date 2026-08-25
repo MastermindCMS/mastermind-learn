@@ -28,10 +28,27 @@ const diagramQuestions: Question[] = [
   makeQuestion(["Die Anzahl der jährlich verkauften Eintrittskarten wurde für drei Museen von 2013 bis 2017 erfasst.", "The number of tickets sold annually was recorded for three museums from 2013 to 2017."], ["Die Gesamtzahl der verkauften Eintrittskarten aller Museen war 2016 am höchsten.", "The total number of tickets sold by all museums was highest in 2016."], 2, ["Addiert man die drei Reihen, ist die Gesamtsumme 2014 höher als 2016. Die Aussage ist falsch.", "Adding the three series shows that the total for 2014 is higher than for 2016. The statement is false."], "museums"),
   makeQuestion(["Für fünf Standorte eines Unternehmens wurde der jeweilige Anteil am Jahresumsatz ermittelt.", "The share of annual revenue was determined for five company locations."], ["Standort C hat einen mehr als doppelt so hohen Anteil am Jahresumsatz wie Standort A.", "Location C has more than twice the share of annual revenue of location A."], 0, ["Standort C erreicht 31 %, Standort A 15 %. Das Doppelte von 15 % sind 30 %, daher ist die Aussage richtig.", "Location C accounts for 31% and Location A for 15%. Twice 15% is 30%, so the statement is true."], "revenue"),
 ];
+const makePuzzle = (puzzle: NonNullable<Question["puzzle"]>, correct: number, explanation: [string,string]): Question => ({
+  de: "Welches Kästchen ergänzt das Raster logisch?", en: "Which tile logically completes the grid?",
+  context: tx("Erkenne die Regeln im 4×4-Raster und wähle die passende Ergänzung.", "Identify the rules in the 4×4 grid and choose the matching tile."),
+  statement: tx("Wähle eine Antwortmöglichkeit aus.", "Choose one answer option."), explanation: tx(...explanation), puzzle,
+  options: ["A","B","C","D","E","F"].map((value)=>tx(value,value)), correct,
+  hint: tx("Prüfe Zeilen, Spalten und das gesamte Raster.", "Check rows, columns and the entire grid."),
+});
+const problemExamples: Question[] = [
+  makePuzzle("triangle-merge", 0, ["Das vierte Kästchen jeder Zeile setzt sich aus allen Dreiecken der ersten drei Kästchen zusammen.", "The fourth tile in each row combines all triangles from the first three tiles."]),
+  makePuzzle("color-cycle", 1, ["In jeder Spalte kommt jede Quadratfarbe genau einmal vor. Gleichzeitig wandert der kleine Marker innerhalb jeder Zeile von Ecke zu Ecke.", "Each square colour occurs exactly once in every column. At the same time, the small marker moves from corner to corner across each row."]),
+  makePuzzle("size-links", 0, ["Die Dreiecke folgen der Größenfolge groß, mittel, klein. Die grauen Marker müssen sich über benachbarte Kästchen hinweg berühren.", "The triangles follow the size sequence large, medium, small. The grey markers must connect across neighbouring tiles."]),
+];
+const problemQuestions: Question[] = [
+  makePuzzle("plus-triangles", 4, ["Die Anzahl und Position der Pluszeichen sowie der Dreiecke folgt getrennten Zeilen- und Spaltenregeln.", "The number and position of plus signs and triangles follow separate row and column rules."]),
+  makePuzzle("rect-plus", 0, ["Die Füllfarbe wechselt zeilenweise. Die Anzahl der Pluszeichen folgt in jeder Zeile der Folge 1, 2, 3, 4.", "The fill alternates by row. In every row, the number of plus signs follows the sequence 1, 2, 3, 4."]),
+  makePuzzle("v-squares", 0, ["V-Symbole und rote Quadrate wechseln sich schachbrettartig ab. Das fehlende Feld muss daher ein V-Feld sein.", "V symbols and red squares alternate like a chessboard. The missing tile must therefore contain V symbols."]),
+];
 const modules: Module[] = [
   { id: "reasoning", title: tx("Angewandtes Schlussfolgern", "Applied reasoning"), desc: tx("Texte analysieren und logische Schlüsse ziehen.", "Analyse texts and draw logical conclusions."), icon: Target, questions: reasoningQuestions },
   { id: "diagram", title: tx("Diagrammanalyse", "Diagram analysis"), desc: tx("Kennzahlen, Anteile und Veränderungen vergleichen.", "Compare figures, proportions and changes."), icon: BarChart3, questions: diagramQuestions, examples: diagramExamples, duration: 60 },
-  { id: "problem", title: tx("Problemlösefähigkeit", "Problem solving"), desc: tx("Muster und effiziente Lösungswege finden.", "Find patterns and efficient solutions."), icon: Lightbulb, questions: reasoningQuestions },
+  { id: "problem", title: tx("Problemlösefähigkeit", "Problem solving"), desc: tx("Muster und effiziente Lösungswege finden.", "Find patterns and efficient solutions."), icon: Lightbulb, questions: problemQuestions, examples: problemExamples, duration: 60 },
   { id: "speed", title: tx("Verarbeitungsgeschwindigkeit", "Processing speed"), desc: tx("Exakte Übereinstimmungen schnell finden.", "Find exact matches quickly."), icon: Gauge, questions: reasoningQuestions },
 ];
 type Phase = "intro" | "instruction" | "examples" | "ready" | "test" | "done";
