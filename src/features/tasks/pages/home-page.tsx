@@ -38,12 +38,12 @@ const makePuzzle = (puzzle: NonNullable<Question["puzzle"]>, correct: number, ex
 const problemExamples: Question[] = [
   makePuzzle("triangle-merge", 0, ["Das vierte Kästchen jeder Zeile setzt sich aus allen Dreiecken der ersten drei Kästchen zusammen.", "The fourth tile in each row combines all triangles from the first three tiles."]),
   makePuzzle("color-cycle", 1, ["In jeder Spalte kommt jede Quadratfarbe genau einmal vor. Gleichzeitig wandert der kleine Marker innerhalb jeder Zeile von Ecke zu Ecke.", "Each square colour occurs exactly once in every column. At the same time, the small marker moves from corner to corner across each row."]),
-  makePuzzle("size-links", 0, ["Die Dreiecke folgen der Größenfolge groß, mittel, klein. Die grauen Marker müssen sich über benachbarte Kästchen hinweg berühren.", "The triangles follow the size sequence large, medium, small. The grey markers must connect across neighbouring tiles."]),
+  makePuzzle("size-links", 0, ["Die Dreiecke folgen der Größenfolge groß, mittel, klein. Die grauen Marker wandern zeilenweise im Uhrzeigersinn durch die vier Ecken.", "The triangles follow the size sequence large, medium, small. The grey marker moves clockwise through the four corners across each row."]),
 ];
 const problemQuestions: Question[] = [
-  makePuzzle("plus-triangles", 4, ["Die Anzahl und Position der Pluszeichen sowie der Dreiecke folgt getrennten Zeilen- und Spaltenregeln.", "The number and position of plus signs and triangles follow separate row and column rules."]),
+  makePuzzle("plus-triangles", 1, ["Die KÃ¤stchen wechseln schachbrettartig zwischen drei Dreiecken auf der Diagonale und zwei Pluszeichen an den gegenÃ¼berliegenden Ecken. Daher enthÃ¤lt das fehlende KÃ¤stchen zwei Pluszeichen.", "The tiles alternate like a chessboard between three triangles on the diagonal and two plus signs in opposite corners. The missing tile must therefore contain two plus signs."]),
   makePuzzle("rect-plus", 0, ["Die Füllfarbe wechselt zeilenweise. Die Anzahl der Pluszeichen folgt in jeder Zeile der Folge 1, 2, 3, 4.", "The fill alternates by row. In every row, the number of plus signs follows the sequence 1, 2, 3, 4."]),
-  makePuzzle("v-squares", 0, ["V-Symbole und rote Quadrate wechseln sich schachbrettartig ab. Das fehlende Feld muss daher ein V-Feld sein.", "V symbols and red squares alternate like a chessboard. The missing tile must therefore contain V symbols."]),
+  makePuzzle("v-squares", 0, ["V-Symbole und rote Quadrate wechseln sich schachbrettartig ab. Zwei V-Symbole stehen dabei immer auf einer Diagonale in gegenüberliegenden Ecken. Das fehlende Feld muss daher zwei V-Symbole enthalten.", "V symbols and red squares alternate like a chessboard. The two V symbols always sit on a diagonal in opposite corners. The missing tile must therefore contain two V symbols."]),
 ];
 const speedMappings = [[1, 2, 3, 4, 5, 6, 7, 8, 9], [4, 7, 1, 9, 2, 8, 5, 3, 6], [8, 3, 6, 1, 7, 4, 9, 2, 5], [2, 9, 5, 7, 3, 1, 8, 6, 4], [6, 1, 8, 3, 9, 5, 2, 4, 7], [9, 5, 2, 8, 4, 7, 1, 6, 3]];
 let speedTaskNumber = 0;
