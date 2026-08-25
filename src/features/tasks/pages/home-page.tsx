@@ -4,7 +4,7 @@ import { useLanguage } from "@/lib/language";
 import { AssessmentPanel } from "../components/assessment-panel";
 import { HeroSection } from "../components/hero-section";
 import { ModuleSelector } from "../components/module-selector";
-import type { Module, Question } from "../components/types";
+import type { Module, Question, SpeedTask } from "../components/types";
 
 const tx = (de: string, en: string) => ({ de, en });
 const makeQuestion = (context: [string, string], statement: [string, string], correct: number, explanation: [string, string], visual?: Question["visual"]): Question => ({
@@ -45,11 +45,24 @@ const problemQuestions: Question[] = [
   makePuzzle("rect-plus", 0, ["Die Füllfarbe wechselt zeilenweise. Die Anzahl der Pluszeichen folgt in jeder Zeile der Folge 1, 2, 3, 4.", "The fill alternates by row. In every row, the number of plus signs follows the sequence 1, 2, 3, 4."]),
   makePuzzle("v-squares", 0, ["V-Symbole und rote Quadrate wechseln sich schachbrettartig ab. Das fehlende Feld muss daher ein V-Feld sein.", "V symbols and red squares alternate like a chessboard. The missing tile must therefore contain V symbols."]),
 ];
+const speedMappings = [[1, 2, 3, 4, 5, 6, 7, 8, 9], [4, 7, 1, 9, 2, 8, 5, 3, 6], [8, 3, 6, 1, 7, 4, 9, 2, 5], [2, 9, 5, 7, 3, 1, 8, 6, 4], [6, 1, 8, 3, 9, 5, 2, 4, 7], [9, 5, 2, 8, 4, 7, 1, 6, 3]];
+let speedTaskNumber = 0;
+const speedTask = (operation: SpeedTask["operation"], left: number[], right: number[], target: SpeedTask["target"]): Question => {
+  const mapping = speedMappings[speedTaskNumber++ % speedMappings.length];
+  const calc = (values: number[]) => { const mapped = values.map((value) => mapping[value - 1]); return mapped.length === 1 ? mapped[0] : mapped.slice(1).reduce((n, value) => operation === "add" ? n + value : operation === "subtract" ? n - value : n * value, mapped[0]); };
+  const leftValue = calc(left); const rightValue = calc(right);
+  return { de: "Vergleichen Sie die beiden Werte.", en: "Compare the two values.", speed: { operation, mapping, left, right, target }, options: [tx("Linkes Feld", "Left field"), tx("Rechtes Feld", "Right field")], correct: target === "larger" ? (leftValue > rightValue ? 0 : 1) : (leftValue < rightValue ? 0 : 1), hint: tx("Nutze die Symbol-Legende und berechne beide Seiten.", "Use the symbol legend and calculate both sides."), explanation: tx("Berechne beide Seiten und vergleiche die Ergebnisse.", "Calculate both sides and compare the results.") };
+};
+const speedQuestions: Question[] = [
+  speedTask("add", [2], [5], "larger"), speedTask("add", [1, 9], [3], "smaller"), speedTask("multiply", [8, 4], [7, 9], "larger"), speedTask("subtract", [6, 5], [1, 2], "smaller"),
+  speedTask("add", [4, 6], [2, 3], "larger"), speedTask("multiply", [3, 7], [4, 5], "larger"), speedTask("subtract", [6, 5], [1, 2], "smaller"), speedTask("add", [9, 2], [6, 1], "smaller"),
+  speedTask("multiply", [2, 6], [3, 4], "smaller"), speedTask("subtract", [7, 2], [9, 5], "larger"), speedTask("add", [5, 8], [4, 3], "larger"), speedTask("multiply", [6, 2], [8, 1], "smaller"),
+];
 const modules: Module[] = [
   { id: "reasoning", title: tx("Angewandtes Schlussfolgern", "Applied reasoning"), desc: tx("Texte analysieren und logische Schlüsse ziehen.", "Analyse texts and draw logical conclusions."), icon: Target, questions: reasoningQuestions },
   { id: "diagram", title: tx("Diagrammanalyse", "Diagram analysis"), desc: tx("Kennzahlen, Anteile und Veränderungen vergleichen.", "Compare figures, proportions and changes."), icon: BarChart3, questions: diagramQuestions, examples: diagramExamples, duration: 60 },
   { id: "problem", title: tx("Problemlösefähigkeit", "Problem solving"), desc: tx("Muster und effiziente Lösungswege finden.", "Find patterns and efficient solutions."), icon: Lightbulb, questions: problemQuestions, examples: problemExamples, duration: 60 },
-  { id: "speed", title: tx("Verarbeitungsgeschwindigkeit", "Processing speed"), desc: tx("Exakte Übereinstimmungen schnell finden.", "Find exact matches quickly."), icon: Gauge, questions: reasoningQuestions },
+  { id: "speed", title: tx("Verarbeitungsgeschwindigkeit", "Processing speed"), desc: tx("Werte mit Symbolen schnell vergleichen.", "Compare symbolic values quickly."), icon: Gauge, questions: speedQuestions, examples: speedQuestions.slice(0, 4), duration: 23 },
 ];
 type Phase = "intro" | "instruction" | "examples" | "ready" | "test" | "done";
 export function HomePage() {
@@ -59,7 +72,7 @@ export function HomePage() {
   const select = (value: string) => { setId(value); setPhase("intro"); setIndex(0); setChoice(null); setScore(0); setSeconds(0); };
   const start = () => { setPhase("instruction"); setIndex(0); setChoice(null); };
   const answer = (value: number) => { if (choice !== null) return; setChoice(value); };
-  const next = () => { if (phase === "instruction") return setPhase("examples"); if (phase === "examples") return index < 2 ? (setIndex(index + 1), setChoice(null)) : setPhase("ready"); if (phase === "ready") { setPhase("test"); setIndex(0); setChoice(null); setScore(0); setSeconds(0); return; } const result = score + (choice === active.questions[index].correct ? 1 : 0); if (index < 2) { setScore(result); setIndex(index + 1); setChoice(null); setSeconds(0); return; } const updated = { ...progress, [id]: Math.max(progress[id] ?? 0, Math.round(result / 3 * 100)) }; setScore(result); setProgress(updated); localStorage.setItem("assessment-progress", JSON.stringify(updated)); setPhase("done"); };
+  const next = () => { if (phase === "instruction") return setPhase("examples"); if (phase === "examples") return index < (active.examples?.length ?? 3) - 1 ? (setIndex(index + 1), setChoice(null)) : setPhase("ready"); if (phase === "ready") { setPhase("test"); setIndex(0); setChoice(null); setScore(0); setSeconds(0); return; } const current = active.questions[index % active.questions.length]; const answered = choice !== null; const result = score + (answered && choice === current.correct ? 1 : 0); if (id === "speed") { if (seconds >= (active.duration ?? 23) - 1 || !answered) { const total = index + (answered ? 1 : 0); const updated = { ...progress, [id]: Math.max(progress[id] ?? 0, Math.round(result / Math.max(total, 1) * 100)) }; setScore(result); setProgress(updated); localStorage.setItem("assessment-progress", JSON.stringify(updated)); setPhase("done"); } else { setScore(result); setIndex((index + 1) % active.questions.length); setChoice(null); } return; } if (index < 2) { setScore(result); setIndex(index + 1); setChoice(null); setSeconds(0); return; } const updated = { ...progress, [id]: Math.max(progress[id] ?? 0, Math.round(result / 3 * 100)) }; setScore(result); setProgress(updated); localStorage.setItem("assessment-progress", JSON.stringify(updated)); setPhase("done"); };
   useEffect(() => { if (phase !== "test") return; const timer = window.setInterval(() => setSeconds((s) => s + 1), 1000); return () => window.clearInterval(timer); }, [phase, index]);
   useEffect(() => { if (phase === "test" && seconds >= (active.duration ?? 90)) next(); }, [seconds, phase]);
   return <main className="min-h-[calc(100vh-73px)] bg-[#f7f8fc]"><HeroSection de={de} modules={modules} text={text} /><ModuleSelector de={de} modules={modules} selectedId={id} progress={progress} onSelect={select} text={text} /><AssessmentPanel de={de} active={active} phase={phase} questionIndex={index} choice={choice} seconds={seconds} score={score} onStart={start} onAnswer={answer} onNext={next} text={text} /></main>;
