@@ -15,7 +15,7 @@ export function HeroSection({ de, modules, text }: HeroSectionProps) {
       <div className="mx-auto grid max-w-6xl gap-10 px-6 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-semibold tracking-wide text-indigo-200">
-            <Sparkles className="h-3.5 w-3.5" /> COGNITIVE SKILLS · PRACTICE
+            <Sparkles className="h-3.5 w-3.5" /> {de ? "KOGNITIVE FÄHIGKEITEN · TRAINING" : "COGNITIVE SKILLS · PRACTICE"}
           </div>
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
             {de ? <>Denken entwickeln.<br /><span className="text-indigo-300">Gezielt trainieren.</span></> : <>Develop your thinking.<br /><span className="text-indigo-300">Practice with purpose.</span></>}
@@ -32,8 +32,8 @@ export function HeroSection({ de, modules, text }: HeroSectionProps) {
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-6">
           <p className="text-sm text-slate-300">{de ? "Vier Bereiche" : "Four skill areas"}</p>
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            {modules.map((item) => <div key={item.id} className="rounded-2xl bg-white/[0.07] p-4"><item.icon className="h-5 w-5 text-indigo-300" /><p className="mt-5 text-sm font-medium">{text(item.title)}</p></div>)}
+          <div className="mt-6 grid min-w-0 grid-cols-2 gap-3">
+            {modules.map((item) => <div key={item.id} className="min-w-0 rounded-2xl bg-white/[0.07] p-4"><item.icon className="h-5 w-5 text-indigo-300" /><p lang={de ? "de" : "en"} className="mt-5 min-w-0 break-words text-sm font-medium leading-5 [hyphens:auto] [overflow-wrap:anywhere]">{text(item.title)}</p></div>)}
           </div>
         </div>
       </div>
