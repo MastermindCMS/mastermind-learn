@@ -15,7 +15,7 @@ export type Question = LocalizedText & {
   statement?: LocalizedText;
   explanation?: LocalizedText;
   visual?: "noise" | "cars" | "weather" | "energy" | "museums" | "revenue";
-  puzzle?: "triangle-merge" | "color-cycle" | "size-links" | "plus-triangles" | "rect-plus" | "v-squares";
+  puzzle?: "triangle-merge" | "color-cycle" | "size-links" | "plus-triangles" | "rect-plus" | "v-squares" | "arithmetic-grid" | "arithmetic-grid-2";
   speed?: SpeedTask;
   options: LocalizedText[];
   correct: number;
